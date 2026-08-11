@@ -1,16 +1,43 @@
-# Webcrawler
+# Web Crawler
 
-A repository containing a web scraping project developed for data collection and analysis. This project includes various iterations and milestones related to the crawling implementation.
+A web crawling project developed to automatically retrieve, process, and organize information from web sources.
 
-## Project Overview
-This repository serves as a centralized location for the development and testing of a web crawler designed to navigate and extract data from targeted websites.
+## Overview
 
-## Contents
-- **Milestones**: Incremental versions of the project, including prototypes and final builds.
-- **Source Code**: Implementation logic for crawling, parsing, and data retrieval.
+This project explores automated web data collection and processing. The crawler was developed as part of a university software development project and demonstrates practical experience with web technologies, data extraction, and program design.
 
-## Usage
-[Add specific instructions here on how to install dependencies, run the crawler, and configure target URLs.]
+## Key Features
 
-## License
-[Insert License Information]
+* Automated retrieval of information from web pages
+* Processing and organization of collected web data
+* Structured crawling workflow
+* Error handling during data collection
+* Modular implementation for easier development and testing
+
+## Technologies
+
+**Languages:** [ADD LANGUAGE]
+**Libraries / Frameworks:** [ADD LIBRARIES]
+**Tools:** Git, GitHub
+
+## My Contribution
+
+* Participated in the design and implementation of the crawler
+* Developed components for retrieving and processing web information
+* Tested crawler functionality and handled implementation issues
+* Contributed to project integration and debugging
+
+## Project Structure
+
+The repository contains multiple development milestones, prototypes, and final versions created throughout the development process.
+
+## What I Learned
+
+This project strengthened my understanding of web data collection, software development workflows, debugging, and transforming unstructured web information into usable data.
+
+## Future Improvements
+
+* Improve repository organization and modularity
+* Add more robust error handling
+* Improve data-processing efficiency
+* Add documentation and automated testing
