@@ -50,6 +50,15 @@ Form data sent to Flask backend.
 Backend filters and returns recommendations.
 Frontend updates recommendation cards dynamically.
 
+## Repository Files
+
+The original project iterations are preserved in `archives/`:
+
+- `prototype.zip` and `prototype2.zip` — prototype versions
+- `milestone1.zip` — milestone submission
+- `final.zip` and `final1.zip` — final project archives
+- `Archive.zip` — additional project archive
+
 ## What I Learned
 
 This project strengthened my experience with web data collection,
