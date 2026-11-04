@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pick Me! – Movie & TV Show Recommender</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+<!-- Background Music -->
+<audio id="bg-music" src="static/background.mp3" autoplay loop></audio>
+
+<!-- Music Control Button -->
+<button id="music-btn" class="btn btn-custom" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+    Play Music
+</button>
+
+<script>
+const music = document.getElementById('bg-music');
+const btn = document.getElementById('music-btn');
+
+btn.addEventListener('click', () => {
+    if (music.paused) {
+        music.play();
+        btn.textContent = "Pause Music";
+    } else {
+        music.pause();
+        btn.textContent = "Play Music";
+    }
+});
+</script>
+
+<!-- Header -->
+<header class="site-header">
+    <div class="icon-wrapper" style="position: relative; display: inline-block;">
+        <img src="static/icon.png" alt="Site Icon" class="site-icon">
+        <img src="static/confetti.gif" alt="Confetti" class="hover-gif">
+    </div>
+    <h1 class="sparkle-title">Movie & Shows Recommender</h1>
+</header>
+
+<!-- Main Container -->
+<div class="container my-5">
+
+    <!-- Search & Filter Form -->
+    <form id="recommendation-form" method="POST" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="search" class="form-control" placeholder="Search by keyword">
+        </div>
+        <div class="col-md-4">
+            <select name="genre" class="form-select">
+                <option value="">Select Genre</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-custom w-100">Get Recommendations</button>
+        </div>
+    </form>
+
+    <!-- Recommendations -->
+    <div id="recommendations-container">
+        
+    </div>
+
+    <!-- Popcorn GIF below recommendations -->
+    <div class="popcorn-box text-center my-5">
+        <img src="static/popcorn.gif" alt="Falling Popcorn">
+    </div>
+
+    <!-- "No Idea" Button -->
+    <div class="no-idea-container text-center">
+        <div class="no-idea btn btn-warning" onclick="goToYouTube()">
+            <p>🤯 I have no idea what to watch!! 😭</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Sound Effects -->
+<audio id="hover-sound" src="static/hover.mp3"></audio>
+<audio id="click-sound" src="static/click.mp3"></audio>
+
+<script>
+const hoverSound = document.getElementById('hover-sound');
+const clickSound = document.getElementById('click-sound');
+
+// Hover effects for buttons, icon, recommendation cards, and the "no-idea" box
+document.querySelectorAll('button, .site-icon, .card-custom, .no-idea').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        hoverSound.currentTime = 0; // rewind
+        hoverSound.play();
+    });
+});
+
+// Click effects
+document.querySelectorAll('button, .site-icon, .card-custom, .no-idea').forEach(el => {
+    el.addEventListener('click', () => {
+        clickSound.currentTime = 0; // rewind
+        clickSound.play();
+    });
+});
+</script>
+
+<script>
+// "No Idea" explode + redirect
+function goToYouTube() {
+    const box = document.querySelector('.no-idea');
+    box.classList.add('explode');
+    setTimeout(() => {
+        window.location.href = 'https://www.youtube.com/@nicoleleee._';
+    }, 500);
+}
+
+// Static version: the recommendation logic from app.py, running in the browser.
+let MOVIES = [], KEYWORDS = {};
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const genreList = m => (m.genres || '').split(',').map(g => g.trim());
+
+function expandKeywords(input) {
+    const words = input.toLowerCase().match(/\w+/g) || [];
+    const out = new Set();
+    for (const w of words) { out.add(w); (KEYWORDS[w] || []).forEach(s => out.add(s)); }
+    return [...out];
+}
+
+function recommendMovies(keyword, genre, topN = 10) {
+    let list = MOVIES.slice();
+    if (genre) list = list.filter(m => genreList(m).includes(genre));
+    if (keyword && keyword.trim()) {
+        const kws = expandKeywords(keyword);
+        if (kws.length) {
+            const re = new RegExp(kws.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'i');
+            list = list.filter(m => re.test(m.title || '') || re.test(m.description || '') || re.test(m.genres || ''));
+        }
+    }
+    list.sort((a, b) => (b.rating ?? -Infinity) - (a.rating ?? -Infinity));
+    return list.slice(0, topN);
+}
+
+function render(recs) {
+    const box = document.querySelector('#recommendations-container');
+    if (!recs.length) { box.innerHTML = '<h3>No matches — try another word or genre!</h3>'; return; }
+    box.innerHTML = '<h3>Top Recommendations</h3><div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">' +
+        recs.map(m => `<div class="col"><div class="card card-custom h-100"><div class="card-body">
+            <h5 class="card-title">${esc(m.title)}</h5>
+            <p class="card-text"><strong>Genres:</strong> ${esc(m.genres)}</p>
+            <p class="card-text"><strong>Rating:</strong> ${esc(m.rating)}</p>
+            <p class="card-text">${esc((m.description || '').slice(0, 120))}...</p>
+            <a href="${esc(m.link)}" target="_blank" rel="noopener" class="btn btn-sm">View</a>
+        </div></div></div>`).join('') + '</div>';
+    box.querySelectorAll('.card-custom, a.btn').forEach(el => {
+        el.addEventListener('mouseenter', () => { hoverSound.currentTime = 0; hoverSound.play().catch(() => {}); });
+        el.addEventListener('click', () => { clickSound.currentTime = 0; clickSound.play().catch(() => {}); });
+    });
+}
+
+fetch('data.json').then(r => r.json()).then(d => {
+    MOVIES = d.movies; KEYWORDS = d.keywords;
+    const genres = [...new Set(MOVIES.flatMap(genreList))].filter(Boolean).sort();
+    const sel = document.querySelector('select[name="genre"]');
+    genres.forEach(g => { const o = document.createElement('option'); o.value = o.textContent = g; sel.appendChild(o); });
+});
+
+const form = document.getElementById('recommendation-form');
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const fd = new FormData(form);
+    render(recommendMovies(fd.get('search') || '', fd.get('genre') || ''));
+});
+</script>
+<script>
+// Play click sound only for "View" buttons
+const viewButtons = document.querySelectorAll('a.btn');
+viewButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const clickSound = document.getElementById('click-sound');
+        clickSound.currentTime = 0;
+        clickSound.play();
+    });
+});
+</script>
+</body>
+</html>
