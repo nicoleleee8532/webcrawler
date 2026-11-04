@@ -1,66 +1,47 @@
-# Web Crawler
+# Movie Recommendation Website (Web Crawler)
 
-A web crawling and data extraction project developed as part of my
-Computer Science coursework.
+A full-stack movie and TV recommendation website. Scrapers collect titles, ratings, genres and descriptions from IMDb, Metacritic, Rotten Tomatoes and Netflix; the data is cleaned and merged; and a Flask app recommends titles from a search like "something funny" or a chosen genre. Built as Computer Science coursework at Beijing Institute of Technology.
 
-## 🔗 Project Links
+- 🎨 [Project presentation on Canva](https://canva.link/ivfg70r43d0arwk)
 
-- 🎨 [View Project Presentation](https://canva.link/ivfg70r43d0arwk)
-- 💻 [View Source Code](https://github.com/nicoleleee8532/webcrawler)
+**Tech:** Python · Flask · pandas · requests · BeautifulSoup · Selenium · HTML/CSS (Bootstrap) · JavaScript
 
-## Overview
+## How it works
 
-This project focuses on automatically collecting and processing information
-from web sources through a web crawler.
+1. **Collect.** `scrapers/` holds one scraper per source (IMDb top 250 and trending, Metacritic, Rotten Tomatoes, Netflix). Raw results are saved in `data/`.
+2. **Clean and combine.** `others/combine.py` merges the sources into `combined_movies.csv`, and `scrapers/imdb_clean.py` cleans them into `combined_movies_cleaned.csv`. `others/analysis.py` explores the data.
+3. **Recommend.** `app.py` expands the search with synonyms from `keywords.json` (so "sad" also matches "tragic", "heartbreaking" and so on), filters by genre and keywords across titles, descriptions and genres, and returns the 10 highest-rated matches.
+4. **Front end.** `templates/index.html` and `static/` give a playful interface with recommendation cards, hover and click sounds, background music and popcorn and confetti animations.
 
-The project involved designing the crawler workflow, implementing the system,
-testing different development iterations, and presenting the final solution.
+## Run it
 
-## My Contribution
+```bash
+pip install -r requirements.txt
+python app.py
+```
 
-- Contributed to the design and implementation of the web crawler
-- Participated in development, testing, and debugging
-- Worked on processing and organizing collected web data
-- Contributed to the final project presentation and documentation
+Then open http://127.0.0.1:5000. The recommender runs on the included CSV, so no scraping is needed to try it.
 
-## Project Presentation
+## My contribution
 
-A complete presentation covering the project design, development process,
-implementation, and results is available here:
+- Designed and implemented parts of the crawler and the recommendation logic
+- Development, testing and debugging across the prototype, milestone and final versions
+- Processing and organising the collected data
+- The final presentation and documentation
 
-👉 [View Full Presentation on Canva](https://canva.link/ivfg70r43d0arwk)
+## Repository layout
 
-## Technologies
+```
+app.py                       Flask app and recommendation logic
+keywords.json                synonym map used to widen searches
+combined_movies_cleaned.csv  dataset the app recommends from
+scrapers/                    one scraper per source
+others/                      merging and analysis scripts
+data/                        raw scraped data
+templates/, static/          front end
+archives/                    earlier versions: prototype, prototype2, milestone1, final
+```
 
-Frontend (Client Side)
-Built using HTML, CSS (Bootstrap), and JavaScript.
-Provides user interaction elements: forms, buttons, icons, cards.
-Integrates sound effects (hover.mp3, click.mp3) and looping background music (background.mp3).
-UI enhanced with GIF animations (popcorn, confetti).
-Backend (Server Side)
-Implemented using Flask (Python).
-Handles requests from the search form.
-Processes user inputs (keyword, genre) and fetches recommendations from dataset/model.
-Returns results dynamically via AJAX to avoid reloading the page.
-Database/Dataset
-Contains movie/show metadata: titles, genres, ratings, descriptions, and links.
-Interaction Flow
-User enters search keyword/genre.
-Form data sent to Flask backend.
-Backend filters and returns recommendations.
-Frontend updates recommendation cards dynamically.
+## What I learned
 
-## Repository Files
-
-The original project iterations are preserved in `archives/`:
-
-- `prototype.zip` and `prototype2.zip` — prototype versions
-- `milestone1.zip` — milestone submission
-- `final.zip` and `final1.zip` — final project archives
-- `Archive.zip` — additional project archive
-
-## What I Learned
-
-This project strengthened my experience with web data collection,
-software development, debugging, collaborative development, and
-presenting a technical solution.
+Web data collection across sites with different structures, cleaning messy real-world data, building a small recommender, and taking a project from prototype to a finished, presented product as part of a team.

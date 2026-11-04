@@ -1,0 +1,8 @@
+{
+  "sad": ["tragic", "heartbreaking", "emotional", "tearjerker", "melancholy", "moving"],
+  "funny": ["comedy", "humor", "parody", "slapstick", "hilarious", "sitcom"],
+  "scary": ["horror", "thriller", "supernatural", "terrifying", "creepy"],
+  "romantic": ["love", "romance", "affection", "relationship", "passion"],
+  "action": ["fight", "battle", "explosion", "war", "adventure"],
+  "inspiring": ["uplifting", "motivational", "hopeful", "dream", "courage"]
+}

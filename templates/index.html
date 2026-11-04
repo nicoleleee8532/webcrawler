@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pick Me! – Movie & TV Show Recommender</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- Background Music -->
+<audio id="bg-music" src="{{ url_for('static', filename='background.mp3') }}" autoplay loop></audio>
+
+<!-- Music Control Button -->
+<button id="music-btn" class="btn btn-custom" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+    Play Music
+</button>
+
+<script>
+const music = document.getElementById('bg-music');
+const btn = document.getElementById('music-btn');
+
+btn.addEventListener('click', () => {
+    if (music.paused) {
+        music.play();
+        btn.textContent = "Pause Music";
+    } else {
+        music.pause();
+        btn.textContent = "Play Music";
+    }
+});
+</script>
+
+<!-- Header -->
+<header class="site-header">
+    <div class="icon-wrapper" style="position: relative; display: inline-block;">
+        <img src="{{ url_for('static', filename='icon.png') }}" alt="Site Icon" class="site-icon">
+        <img src="{{ url_for('static', filename='confetti.gif') }}" alt="Confetti" class="hover-gif">
+    </div>
+    <h1 class="sparkle-title">Movie & Shows Recommender</h1>
+</header>
+
+<!-- Main Container -->
+<div class="container my-5">
+
+    <!-- Search & Filter Form -->
+    <form id="recommendation-form" method="POST" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="search" class="form-control" placeholder="Search by keyword">
+        </div>
+        <div class="col-md-4">
+            <select name="genre" class="form-select">
+                <option value="">Select Genre</option>
+                {% for genre in genres %}
+                    <option value="{{ genre }}">{{ genre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-custom w-100">Get Recommendations</button>
+        </div>
+    </form>
+
+    <!-- Recommendations -->
+    <div id="recommendations-container">
+        {% if recommendations %}
+        <h3>Top Recommendations</h3>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for movie in recommendations %}
+            <div class="col">
+                <div class="card card-custom h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ movie.title }}</h5>
+                        <p class="card-text"><strong>Genres:</strong> {{ movie.genres }}</p>
+                        <p class="card-text"><strong>Rating:</strong> {{ movie.rating }}</p>
+                        <p class="card-text">{{ movie.description[:120] }}...</p>
+                        <a href="{{ movie.link }}" target="_blank" class="btn btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Popcorn GIF below recommendations -->
+    <div class="popcorn-box text-center my-5">
+        <img src="{{ url_for('static', filename='popcorn.gif') }}" alt="Falling Popcorn">
+    </div>
+
+    <!-- "No Idea" Button -->
+    <div class="no-idea-container text-center">
+        <div class="no-idea btn btn-warning" onclick="goToYouTube()">
+            <p>🤯 I have no idea what to watch!! 😭</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Sound Effects -->
+<audio id="hover-sound" src="{{ url_for('static', filename='hover.mp3') }}"></audio>
+<audio id="click-sound" src="{{ url_for('static', filename='click.mp3') }}"></audio>
+
+<script>
+const hoverSound = document.getElementById('hover-sound');
+const clickSound = document.getElementById('click-sound');
+
+// Hover effects for buttons, icon, recommendation cards, and the "no-idea" box
+document.querySelectorAll('button, .site-icon, .card-custom, .no-idea').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        hoverSound.currentTime = 0; // rewind
+        hoverSound.play();
+    });
+});
+
+// Click effects
+document.querySelectorAll('button, .site-icon, .card-custom, .no-idea').forEach(el => {
+    el.addEventListener('click', () => {
+        clickSound.currentTime = 0; // rewind
+        clickSound.play();
+    });
+});
+</script>
+
+<script>
+// "No Idea" explode + redirect
+function goToYouTube() {
+    const box = document.querySelector('.no-idea');
+    box.classList.add('explode');
+    setTimeout(() => {
+        window.location.href = 'https://www.youtube.com/@nicoleleee._';
+    }, 500);
+}
+
+// AJAX form submission (prevents page reload and keeps music playing)
+const form = document.getElementById('recommendation-form');
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    fetch("/", { method: "POST", body: formData })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const newRecs = doc.querySelector("#recommendations-container");
+            document.querySelector("#recommendations-container").replaceWith(newRecs);
+        });
+});
+</script>
+<script>
+// Play click sound only for "View" buttons
+const viewButtons = document.querySelectorAll('a.btn');
+viewButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const clickSound = document.getElementById('click-sound');
+        clickSound.currentTime = 0;
+        clickSound.play();
+    });
+});
+</script>
+</body>
+</html>
