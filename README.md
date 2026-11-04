@@ -2,7 +2,7 @@
 
 A full-stack movie and TV recommendation website. Scrapers collect titles, ratings, genres and descriptions from IMDb, Metacritic, Rotten Tomatoes and Netflix; the data is cleaned and merged; and a Flask app recommends titles from a search like "something funny" or a chosen genre. Built as Computer Science coursework at Beijing Institute of Technology.
 
-- ▶️ [Live demo](https://nicoleleee8532.github.io/webcrawler/)
+- ▶️ [Live demo](https://nicoleleee8532.github.io/movie-recommender/)
 - 🎨 [Project presentation on Canva](https://canva.link/ivfg70r43d0arwk)
 
 **Tech:** Python · Flask · pandas · requests · BeautifulSoup · Selenium · HTML/CSS (Bootstrap) · JavaScript
@@ -25,7 +25,7 @@ Then open http://127.0.0.1:5000. The recommender runs on the included CSV, so no
 
 ## Live demo
 
-The live demo is a static build for GitHub Pages: `tools/build_static.py` turns the CSV into `data.json` and runs the same recommendation logic as `app.py` in the browser, so it gives the same results without a server. Rebuild it after changing the data with `python tools/build_static.py`.
+The live demo is a static build hosted on my GitHub Pages site: `tools/build_static.py` turns the CSV into `data.json` and runs the same recommendation logic as `app.py` in the browser, so it gives the same results without a server. Rebuild it after changing the data with `python tools/build_static.py`.
 
 ## My contribution
 
